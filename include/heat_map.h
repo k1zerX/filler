@@ -13,5 +13,24 @@
 #ifndef HEAT_MAP_H
 # define HEAT_MAP_H
 
+# include "filler.h"
+
+typedef struct	s_hm_queue	t_hm_queue;
+typedef struct	s_hm_qelem	t_hm_qelem;
+
+struct						s_hm_queue
+{
+	t_hm_qelem				*start;
+	t_hm_qelem				*end;
+};
+
+struct						s_hm_qelem
+{
+	t_point					p;
+	int						heat;
+	t_hm_qelem				*next;
+};
+
+void						fill_heat_map(t_board *board);
 
 #endif

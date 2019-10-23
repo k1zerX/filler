@@ -1,0 +1,25 @@
+$$$ exec p1 : [gg]
+Plateau 20 20:
+   01234567890123456789
+00 ....................
+01 .OOOOOOOOOOOOOOOO.O.
+02 .O..............O.O.
+03 .O.OOOOOOOOOOOO.O.O.
+04 .O.O..........O.O.O.
+05 .O.O.OOOOOOOO.O.O.O.
+06 .O.O.O......O.O.O.O.
+07 .O.O.O.OOOO.O.O.O.O.
+08 .O.O.O.O..O.O.O.O.O.
+09 .O.O.O.O.XO.O.O.O.O.
+10 .O.O.O.O.OO.O.O.O.O.
+11 .O.O.O.O....O.O.O.O.
+12 .O.O.O.OOOOOO.O.O.O.
+13 .O.O.O........O.O.O.
+14 .O.O.OOOOOOOOOO.O.O.
+15 .O.O............O.O.
+16 .O.OOOOOOOOOOOOOO.O.
+17 .O................O.
+18 .OOOOOOOOOOOOOOOOOO.
+19 ....................
+Piece 1 2:
+**

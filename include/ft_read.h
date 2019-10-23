@@ -15,6 +15,6 @@
 
 # include "filler.h"
 
-t_p_nbr	ft_read(t_map *board, t_map *piece);
+void	ft_read(t_board *board, t_piece *piece);
 
 #endif

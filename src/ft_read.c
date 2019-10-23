@@ -37,16 +37,16 @@ int		cool_atoi(char **str)
 	return (n);
 }
 
-void	get_size(t_map *map, char *str)
+void	get_size(int *n, int *m, char *str)
 {
 	while (ft_isalpha(*str))
 		++str;
 	while (ft_isspace(*str))
 		++str;
-	map->n = cool_atoi(&str);
+	*n = cool_atoi(&str);
 	while (ft_isspace(*str))
 		++str;
-	map->m = cool_atoi(&str);
+	*m = cool_atoi(&str);
 }
 
 char	is_valid(char c)
@@ -65,13 +65,10 @@ char	is_valid(char c)
 	return (0);
 }
 
-char	*get_board_str(char *str, int len)
+void	get_board_str(char *map, char *str, int len, t_p_nbr p)
 {
 	int		i;
-	char	*res;
 
-	if (!(res = malloc(len * sizeof(char *))))
-		ft_exit(MALLOC_ERR);
 	while (ft_isspace(*str))
 		++str;
 	while (ft_isdigit(*str))
@@ -84,24 +81,20 @@ char	*get_board_str(char *str, int len)
 		if (!is_valid(*str))
 			ft_exit(READ_ERR);
 		if (*str == EMPTY)
-			res[i] = 0;
+			map[i] = 0;
 		else if (*str == g_ps[p].new || *str == g_ps[p].old)
-			res[i] = -1;
+			map[i] = MY;
 		else
-			res[i] = -2;
+			map[i] = OP;
 		++str;
 		++i;
 	}
-	return (res);
 }
 
-char	*get_piece_str(char *str, int len)
+void	get_piece_str(char *map, char *str, int len)
 {
 	int		i;
-	char	*res;
 
-	if (!(res = malloc(len * sizeof(char *))))
-		ft_exit(MALLOC_ERR);
 	while (ft_isspace(*str))
 		++str;
 	while (ft_isdigit(*str))
@@ -112,25 +105,24 @@ char	*get_piece_str(char *str, int len)
 	while (i < len)
 	{
 		if (*str == EMPTY)
-			res[i] = 0;
+			map[i] = 0;
 		else if (*str == FULL)
-			res[i] = 1;
+			map[i] = 1;
 		else
 			ft_exit(READ_ERR);
 		++str;
 		++i;
 	}
-	return (res);
 }
 
-void	ft_read_board(t_map *board)
+void	ft_read_board(t_board *board, t_p_nbr p)
 {
 	char	*str;
 	int		i;
 
 	if (gnl(0, &str) > 0)
 	{
-		get_size(board, str);
+		get_size(&board->n, &board->m, str);
 		free(str);
 	}
 	else
@@ -139,14 +131,16 @@ void	ft_read_board(t_map *board)
 		free(str);
 	else
 		ft_exit(READ_ERR);
-	if (!(board->map = malloc(board->n * sizeof(char *))))
+	if (!(board->map = malloc(board->n * board->m * sizeof(char))))
+		ft_exit(MALLOC_ERR);
+	if (!(board->heat_map = malloc(board->n * board->m * sizeof(int))))
 		ft_exit(MALLOC_ERR);
 	i = 0;
 	while (i < board->n)
 	{
 		if (gnl(0, &str) > 0)
 		{
-			board->map[i] = get_board_str(str, board->m);
+			get_board_str(board->map + i * board->m, str, board->m, p);
 			free(str);
 		}
 		else
@@ -155,26 +149,27 @@ void	ft_read_board(t_map *board)
 	}
 }
 
-void	ft_read_piece(t_map *piece)
+void	ft_read_piece(t_piece *piece)
 {
 	char	*str;
 	int		i;
 
 	if (gnl(0, &str) > 0)
 	{
-		get_size(piece, str);
+		get_size(&piece->n, &piece->m, str);
+
 		free(str);
 	}
 	else
 		ft_exit(READ_ERR);
-	if (!(piece->map = malloc(piece->n * sizeof(char *))))
+	if (!(piece->map = malloc(piece->n * piece->m * sizeof(char))))
 		ft_exit(MALLOC_ERR);
 	i = 0;
 	while (i < piece->n)
 	{
 		if (gnl(0, &str) > 0)
 		{
-			piece->map[i] = get_piece_str(str, piece->m);
+			get_piece_str(piece->map + i * piece->m, str, piece->m);
 			free(str);
 		}
 		else
@@ -183,7 +178,7 @@ void	ft_read_piece(t_map *piece)
 	}
 }
 
-t_p_nbr	ft_read(t_map *board, t_map *piece)
+void	ft_read(t_board *board, t_piece *piece)
 {
 	t_p_nbr	p;
 	char	*str;
@@ -199,9 +194,8 @@ t_p_nbr	ft_read(t_map *board, t_map *piece)
 	}
 	else
 		ft_exit(READ_ERR);
-	ft_read_board(board);
+	ft_read_board(board, p);
 	ft_read_piece(piece);
 	if (gnl(0, &str) > 0)
 		ft_exit(READ_ERR);
-	return (p);
 }

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbatz <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/21 18:14:10 by kbatz             #+#    #+#             */
-/*   Updated: 2019/10/21 21:41:14 by kbatz            ###   ########.fr       */
+/*   Created: 2019/10/25 23:00:08 by kbatz             #+#    #+#             */
+/*   Updated: 2019/10/25 23:17:25 by kbatz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,88 +15,21 @@
 #include "tools.h"
 #include "gvars.h"
 #include "heat_map.h"
+#include "libft.h"
 
-#include <stdio.h>
-#include <unistd.h>
-#define LEN 3
-void	print_map(char *map, int n, int m)
+int		try_piece_ifs(int c, int *res, char *f)
 {
-	int		i;
-	int		j;
-
-	i = 0;
-	while (i < n)
+	if (c == UNREACHABLE || c == OP)
+		return (1);
+	if (c == MY)
 	{
-		j = 0;
-		while (j < m)
-		{
-			printf("%*d", LEN, *map);
-			++map;
-			++j;
-		}
-		printf("\n");
-		++i;
+		if (*f)
+			return (1);
+		*f = 1;
 	}
-}
-void	print_heat_map(int *map, int n, int m)
-{
-	int		i;
-	int		j;
-
-	j = 0;
-	while (j < LEN)
-	{
-		printf(" ");
-		++j;
-	}
-	printf(" |");
-	j = 0;
-	while (j < m)
-	{
-		printf("%*d", LEN, j);
-		++j;
-	}
-	printf("\n");
-	j = 0;
-	while (j < LEN)
-	{
-		printf("-");
-		++j;
-	}
-	printf("-+");
-	i = 0;
-	while (i < m)
-	{
-		j = 0;
-		while (j < LEN)
-		{
-			printf("-");
-			++j;
-		}
-	++i;
-	}
-	printf("--\n");
-	i = 0;
-	while (i < n)
-	{
-		printf("%*d |", LEN, i);
-		j = 0;
-		while (j < m)
-		{
-			if (*map == UNREACHABLE)
-				printf("%*s", LEN, "UN");
-			else if (*map == MY)
-				printf("%*s", LEN, "MY");
-			else if (*map == OP)
-				printf("%*s", LEN, "OP");
-			else
-				printf("%*d", LEN, *map);
-			++map;
-			++j;
-		}
-		printf("\n");
-		++i;
-	}
+	else
+		*res += c;
+	return (0);
 }
 
 int		try_piece(t_board *board, t_piece *piece, int y, int x)
@@ -109,129 +42,58 @@ int		try_piece(t_board *board, t_piece *piece, int y, int x)
 
 	f = 0;
 	res = 0;
-	i = 0;
-	while (i < piece->n)
+	i = -1;
+	while (++i < piece->n)
 	{
-		j = 0;
-		while (j < piece->m)
+		j = -1;
+		while (++j < piece->m)
 		{
 			if (piece->map[i * piece->m + j])
 			{
 				c = board->heat_map[(y + i) * board->m + (x + j)];
-//				printf("\t%d ---- %d\n", c, i * piece->m + j);
-				if (c == UNREACHABLE || c == OP)
+				if (try_piece_ifs(c, &res, &f))
 					return (-1);
-				if (c == MY)
-				{
-					if (f)
-						return (-1);
-					f = 1;
-				}
-				else
-					res += c;
 			}
-			++j;
 		}
-		++i;
 	}
-//	printf("%d %d --- %d\n", y, x, res);
-	if (f)
-		return (res);
-	return (-1);
+	return ((f) ? (res) : (-1));
+}
+
+void	put_piece_cycle(t_point p, t_board *board, t_piece *piece, t_sol *sol)
+{
+	int		buf;
+
+	while (++p.x <= board->m - piece->m)
+		if ((buf = try_piece(board, piece, p.y, p.x)) < sol->min && buf >= 0)
+			(*sol) = (t_sol){buf, p};
 }
 
 t_point	put_piece(t_board *board, t_piece *piece, char *f)
 {
 	int			i;
 	int			j;
-	const int	y = board->n - piece->n;
-	const int	x = board->m - piece->m;
-	int			min;
 	int			buf;
-	t_point		p;
+	t_sol		sol;
 
 	*f = 1;
-	i = 0;
-	while (i < y)
+	i = -1;
+	while (*f && ++i <= board->n - piece->n)
 	{
-		j = 0;
-		while (j < x)
-		{
+		j = -1;
+		while (++j <= board->m - piece->m)
 			if ((buf = try_piece(board, piece, i, j)) >= 0)
 			{
-				min = buf;
-				p = (t_point){i, j};
+				sol = (t_sol){buf, (t_point){i, j}};
 				*f = 0;
 				break ;
 			}
-			++j;
-		}
-		if (*f == 0)
-			break ;
-		++i;
 	}
 	if (*f)
-	{
-		// TRY TO PUT TO UNREACHABLE
 		return ((t_point){0, 0});
-	}
-	while (++j < x)
-		if ((buf = try_piece(board, piece, i, j)) < min && buf >= 0)
-		{
-			min = buf;
-			p = (t_point){i, j};
-		}
-	while (++i < y)
-	{
-		j = 0;
-		while (j < x)
-		{
-			if ((buf = try_piece(board, piece, i, j)) < min && buf >= 0)
-			{
-				min = buf;
-				p = (t_point){i, j};
-			}
-			++j;
-		}
-	}
-	return (p);
-}
-
-void	test_zero(int n, int m, int visited[n][m])
-{
-	int		i;
-	int		j;
-
-	i = 0;
-	while (i < n)
-	{
-		j = 0;
-		while (j < m)
-		{
-			visited[i][j] = 0;
-			++j;
-		}
-		++i;
-	}
-}
-
-void	test_print(int n, int m, int visited[n][m])
-{
-	int		i;
-	int		j;
-
-	i = 0;
-	while (i < n)
-	{
-		j = 0;
-		while (j < m)
-		{
-			printf("%*d", 6, visited[i][j]);
-			++j;
-		}
-		printf("\n");
-		++i;
-	}
+	put_piece_cycle((t_point){i, j}, board, piece, &sol);
+	while (++i <= board->n - piece->n)
+		put_piece_cycle((t_point){i, -1}, board, piece, &sol);
+	return (sol.p);
 }
 
 int		main(void)
@@ -241,26 +103,18 @@ int		main(void)
 	char	f;
 	t_point	p;
 
-	ft_read(&board, &piece);
-/*	write(1, "board:\n", 7);
-	print_map(board);
-	write(1, "piece:\n", 7);
-	print_map(piece);
-	write(1, "0 0\n", 4);*/
-	fill_heat_map(&board);
-	print_map(board.map, board.n, board.m);
-	write(1, "\n", 1);
-	print_map(piece.map, piece.n, piece.m);
-	write(1, "\n", 1);
-	print_heat_map(board.heat_map, board.n, board.m);
-	p = put_piece(&board, &piece, &f);
-	if (f)
+	while (1)
 	{
-		printf("CAN'T PUT PIECE ON BOARD\n");
-	}
-	else
-	{
-		printf("%d %d\n", p.y, p.x);
+		ft_read(&board, &piece);
+		fill_heat_map(&board);
+		p = put_piece(&board, &piece, &f);
+		if (f)
+			write(1, "0 0\n", 4);
+		else
+			ft_print(p);
+		free(board.map);
+		free(board.heat_map);
+		free(piece.map);
 	}
 	return (0);
 }

@@ -6,31 +6,36 @@
 #    By: kbatz <marvin@42.fr>                       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/12/25 21:10:51 by kbatz             #+#    #+#              #
-#    Updated: 2019/10/21 18:28:15 by kbatz            ###   ########.fr        #
+#    Updated: 2019/10/25 23:30:34 by kbatz            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= kbatz.filler
-LIB		= libft
+NAME	=	kbatz.filler
+LIB		=	libft
 
 # **************************************************************************** #
 
-SRCDIR	= src/
-OBJDIR	= .obj/
-HDRDIR	= include/
-TESTDIR	= test/
+SRCDIR	=	src/
+OBJDIR	=	.obj/
+HDRDIR	=	include/
+TESTDIR	=	test/
 
 # **************************************************************************** #
 
-LIBDIR	= $(addsuffix /,$(LIB))
-SRC		= $(patsubst $(SRCDIR)%,%,$(wildcard $(SRCDIR)*.c))
-OBJ		= $(SRC:%.c=%.o)
-HDR		= $(wildcard $(HDRDIR)*.h)
-TEST	= $(patsubst $(TESTDIR)%,%,$(wildcard $(TESTDIR)*))
-LFLAG	= $(addprefix -L,$(LIBDIR)) $(addprefix -,$(patsubst lib%,l%,$(LIB)))
-IFLAG	= $(addprefix -I,$(HDRDIR)) $(addprefix -I,$(LIBDIR))
-CFLAG	= -Wall -Wextra -Werror
-CC		= gcc
+LIBDIR	=	$(addsuffix /,$(LIB))
+SRC		=	ft_read.c		\
+			heat_map.c		\
+			hm_queue.c		\
+			main.c			\
+			read_tools.c	\
+			tools.c
+OBJ		=	$(SRC:%.c=%.o)
+HDR		=	$(wildcard $(HDRDIR)*.h)
+TEST	=	$(patsubst $(TESTDIR)%,%,$(wildcard $(TESTDIR)*))
+LFLAG	=	$(addprefix -L,$(LIBDIR)) $(addprefix -,$(patsubst lib%,l%,$(LIB)))
+IFLAG	=	$(addprefix -I,$(HDRDIR)) $(addprefix -I,$(LIBDIR))
+CFLAG	=	-Wall -Wextra -Werror
+CC		=	gcc
 
 # **************************************************************************** #
 

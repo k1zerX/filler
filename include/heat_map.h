@@ -6,7 +6,7 @@
 /*   By: kbatz <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 20:53:20 by kbatz             #+#    #+#             */
-/*   Updated: 2019/10/21 20:53:52 by kbatz            ###   ########.fr       */
+/*   Updated: 2019/10/25 22:04:52 by kbatz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 # include "filler.h"
 
-typedef struct	s_hm_queue	t_hm_queue;
-typedef struct	s_hm_qelem	t_hm_qelem;
+typedef struct s_hm_queue	t_hm_queue;
+typedef struct s_hm_qelem	t_hm_qelem;
 
 struct						s_hm_queue
 {
@@ -32,5 +32,7 @@ struct						s_hm_qelem
 };
 
 void						fill_heat_map(t_board *board);
+t_hm_qelem					*hm_queue_pop(t_hm_queue *q);
+void						hm_queue_push(t_hm_queue *q, t_point p, int heat);
 
 #endif

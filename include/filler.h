@@ -6,7 +6,7 @@
 /*   By: kbatz <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 18:29:10 by kbatz             #+#    #+#             */
-/*   Updated: 2019/10/21 20:39:25 by kbatz            ###   ########.fr       */
+/*   Updated: 2019/10/25 22:53:27 by kbatz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,12 @@
 # define OP				-2
 # define UNREACHABLE	-3
 
-typedef struct	s_board	t_board;
-typedef struct	s_piece	t_piece;
-typedef enum	e_p_nbr	t_p_nbr;
-typedef struct	s_p		t_p;
-typedef struct	s_point	t_point;
+typedef struct s_board		t_board;
+typedef struct s_piece		t_piece;
+typedef struct s_p			t_p;
+typedef struct s_point		t_point;
+typedef struct s_sol		t_sol;
+typedef enum e_p_nbr		t_p_nbr;
 
 struct					s_board
 {
@@ -46,11 +47,18 @@ struct					s_point
 	int					x;
 };
 
+struct					s_sol
+{
+	int					min;
+	t_point				p;
+};
+
 enum					e_p_nbr
 {
-	P1,
-	P2,
-	P_LEN
+	UNDEFINED = -1,
+	P1 = 0,
+	P2 = 1,
+	P_LEN = 2
 };
 
 struct					s_p

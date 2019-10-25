@@ -1,22 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   gvars.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kbatz <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/25 22:05:05 by kbatz             #+#    #+#             */
+/*   Updated: 2019/10/25 22:05:06 by kbatz            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef GVARS_H
 # define GVARS_H
 
-# include "tools.h"
 # include "filler.h"
-
-t_err	g_errs[ERR_LEN] =
-{
-	[MALLOC_ERR] =
-	{
-		"cannot allocate memory\n",
-		23
-	},
-	[READ_ERR] =
-	{
-		"read error\n",
-		11
-	}
-};
 
 t_p		g_ps[P_LEN] =
 {
